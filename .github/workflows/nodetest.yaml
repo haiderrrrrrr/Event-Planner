@@ -4,9 +4,9 @@ name: Run Tests
 # When to run:
 on:
   push:
-    branches: [main]     # Runs when you push to main branch
+    branches: [master]     # Runs when you push to main branch
   pull_request:          # Runs when someone opens a PR
-    branches: [main]
+    branches: [master]
 
 jobs:
   test:
