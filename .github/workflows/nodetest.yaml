@@ -1,1 +1,43 @@
 
+name: Run Tests
+
+# When to run:
+on:
+  push:
+    branches: [main]     # Runs when you push to main branch
+  pull_request:          # Runs when someone opens a PR
+    branches: [main]
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest  # Uses GitHub's Linux machine
+
+    # Services needed (MongoDB for testing)
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports: [27017:27017]
+        options: --health-cmd "mongo --eval 'db.runCommand(\"ping\").ok'"
+
+    # Setup steps:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x  # Uses Node 20 (current LTS)
+          cache: 'npm'        # Caches node_modules for faster runs
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+        env:
+          NODE_ENV: test
+          MONGO_URI: mongodb://localhost:27017/test_db
+          JWT_SECRET: test-secret-123
+          # Add other test environment variables here
